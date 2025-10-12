@@ -19,7 +19,7 @@ public class Order extends AggregateRoot<OrderId> {
 
     private TrackingId trackingId;
     private OrderStatus orderStatus;
-    private final List<String> failureMessages;
+    private List<String> failureMessages;
 
     public void initialize_order() {
         setId( new OrderId(UUID.randomUUID()) );
@@ -74,6 +74,50 @@ public class Order extends AggregateRoot<OrderId> {
             throw new OrderDomainException( "주문 초기화 에러");
         }
      }
+
+    public void pay() {
+        if ( orderStatus != OrderStatus.PENDING) {
+            throw new OrderDomainException("Order is not correct state for pay operation");
+        }
+        orderStatus = OrderStatus.PAID;
+    }
+
+    public void approve() {
+        if ( orderStatus != OrderStatus.PAID) {
+            throw new OrderDomainException("Order is not correct state for approve operation");
+        }
+        orderStatus = OrderStatus.APPROVED;
+    }
+
+    public void initCancel( List<String> failureMessages ) {
+        if ( orderStatus != OrderStatus.PAID) {
+            throw new OrderDomainException("Order is not correct state for initCancel operation");
+        }
+        orderStatus = OrderStatus.CANCELLING;
+        updateFailureMessage( failureMessages );
+    }
+
+    public void cancelled( List<String> failureMessages ) {
+        if ( !(orderStatus == OrderStatus.CANCELLING || orderStatus == OrderStatus.PENDING) ) {
+            throw new OrderDomainException("Order is not correct state for cancelled operation");
+        }
+        orderStatus = OrderStatus.CANCELED;
+        updateFailureMessage(failureMessages);
+    }
+
+    private void updateFailureMessage(List<String> failureMessages) {
+        if ( this.failureMessages != null && failureMessages != null ) {
+            this.failureMessages.addAll(
+                    failureMessages.stream()
+                    .filter( message -> message.isEmpty() )
+                    .toList()
+            );
+        }
+
+        if ( this.failureMessages == null ) {
+            this.failureMessages = failureMessages;
+        }
+    }
 
     private Order(Builder builder) {
 //        orderId = builder.orderId;
