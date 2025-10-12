@@ -1,0 +1,27 @@
+<build>
+    <plugins>
+        <!-- 테스트 코드 실행 제외 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M7</version>
+            <configuration>
+                <skipTests>true</skipTests>
+            </configuration>
+        </plugin>
+
+        <!-- 테스트 클래스를 JAR에 포함하지 않도록 설정 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.0</version>
+            <configuration>
+                <excludes>
+                    <exclude>**/Test*.class</exclude>
+                    <exclude>**/*Test.class</exclude>
+                    <exclude>**/*Tests.class</exclude>
+                </excludes>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
