@@ -4,6 +4,8 @@ import com.autumnia.shopsystem.domain.entity.BaseEntity;
 import com.autumnia.shopsystem.domain.vo.Money;
 import com.autumnia.shopsystem.domain.vo.ProductId;
 
+import java.util.Objects;
+
 public class Product extends BaseEntity<ProductId> {
     private String name;
     private Money price;
@@ -20,5 +22,10 @@ public class Product extends BaseEntity<ProductId> {
 
     public Money getPrice() {
         return price;
+    }
+
+    public void update_with_confirmedName_and_price( String name, Money price) {
+        this.name = name;
+        this.price = price;
     }
 }
