@@ -1,26 +1,30 @@
 package com.autumnia.shopsystem.order.service.domain.dto.create;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class OrderItem {
-    @NotNull
-    private final UUID productId;
+public class CreateOrderCommand {
+   @NotNull
+    private final UUID customerId ;
 
     @NotNull
-    private final Integer quantity;
+    private final UUID restaurantId;
 
     @NotNull
     private final BigDecimal price;
 
     @NotNull
-    private final BigDecimal subTotal;
+    private final List<OrderItem> items;
+
+    @NotNull
+    private final OrderAddress address;
 }
