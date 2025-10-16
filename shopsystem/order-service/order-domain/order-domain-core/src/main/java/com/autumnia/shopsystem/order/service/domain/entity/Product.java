@@ -4,7 +4,6 @@ import com.autumnia.shopsystem.domain.entity.BaseEntity;
 import com.autumnia.shopsystem.domain.vo.Money;
 import com.autumnia.shopsystem.domain.vo.ProductId;
 
-import java.util.Objects;
 
 public class Product extends BaseEntity<ProductId> {
     private String name;
@@ -14,6 +13,10 @@ public class Product extends BaseEntity<ProductId> {
         super.setId( productId);
         this.name = name;
         this.price = price;
+    }
+
+    public Product(ProductId productId) {
+        super.setId( productId );
     }
 
     public String getName() {

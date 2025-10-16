@@ -23,6 +23,10 @@ public class Restaurant extends AggregateRoot<RestaurantId> {
         return products;
     }
 
+    public static Restaurant.Builder builder() {
+
+        return new Restaurant.Builder();
+    }
 
     public static final class Builder {
         private RestaurantId restaurantId;
