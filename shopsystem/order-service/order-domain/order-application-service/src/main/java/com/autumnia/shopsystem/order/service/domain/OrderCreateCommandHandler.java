@@ -10,6 +10,7 @@ import com.autumnia.shopsystem.order.service.domain.event.OrderCreatedEvent;
 import com.autumnia.shopsystem.order.service.domain.exception.OrderDomainException;
 import com.autumnia.shopsystem.order.service.domain.mapper.OrderDataMapper;
 import com.autumnia.shopsystem.order.service.domain.ports.output.CustomerRepository;
+import com.autumnia.shopsystem.order.service.domain.ports.output.OrderCreatedPaymentRequestMessagePublisher;
 import com.autumnia.shopsystem.order.service.domain.ports.output.OrderRepository;
 import com.autumnia.shopsystem.order.service.domain.ports.output.RestaurantRepository;
 import jakarta.validation.constraints.NotNull;
@@ -25,56 +26,18 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class OrderCreateCommandHandler {
-    private final OrderDomainService orderDomainService;
-    private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
-    private final RestaurantRepository restaurantRepository;
-
+    private final OrderCreateHelper orderCreateHelper;
     private final OrderDataMapper orderDataMapper;
+    private final OrderCreatedPaymentRequestMessagePublisher orderCreatedPaymentRequestMessagePublisher;
 
     @Transactional
     public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
-        // 고객확인
-        check_customer(createOrderCommand.getCustomerId());
+        OrderCreatedEvent orderCreatedEvent = orderCreateHelper.persistOrder(createOrderCommand);
+        log.info("Order is created with id {}:", orderCreatedEvent.getOrder().getId().getValue() );
 
-        // 음식점 확인
-        Restaurant restaurant = check_restaurant( createOrderCommand );
+        orderCreatedPaymentRequestMessagePublisher.publish(orderCreatedEvent);
 
-        Order order = orderDataMapper.createOrderCommandToOrder( createOrderCommand );
-        OrderCreatedEvent orderCreatedEvent = orderDomainService.validate_and_initiate_order( order, restaurant);
-        Order order_result = save_order( order);
-        log.info("Order is created with id: {}", order_result.getId() );
-
-        return orderDataMapper.orderToCreateOrderResponse(order_result);
+        return orderDataMapper.orderToCreateOrderResponse( orderCreatedEvent.getOrder() );
     }
 
-    private Restaurant check_restaurant(CreateOrderCommand createOrderCommand) {
-        Restaurant restaurant = orderDataMapper.createOrderCommandToRestaurant(createOrderCommand);
-        Optional<Restaurant> restaurantData = restaurantRepository.findRestaurantInformation(restaurant);
-
-        if ( restaurantData.isEmpty() ) {
-            log.warn("Could not find restaurant with restaurant id: {}", createOrderCommand.getRestaurantId() );
-            throw new OrderDomainException("Could not find restaurant with restaurant id : " + createOrderCommand.getRestaurantId());
-        }
-
-        return restaurantData.get();
-    }
-
-    private void check_customer(@NotNull UUID customerId) {
-        Optional<Customer> customer = this.customerRepository.findCustomer(customerId);
-        if ( customer.isEmpty() ) {
-            log.warn("Could not find customer with customer id: {}", customerId);
-            throw new OrderDomainException("Could not find customer with customer id : " + customerId);
-        }
-    }
-
-    private Order save_order(Order order) {
-        Order saved_order = orderRepository.save(order);
-        if ( saved_order == null ) {
-            log.error("Could not save order.");
-            throw new OrderDomainException("Could not save order.");
-        }
-        log.info ( "Order is saved with id: {} ", saved_order.getId() );
-        return saved_order;
-    }
 }
