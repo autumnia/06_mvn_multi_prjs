@@ -3,7 +3,7 @@ package com.autumnia.shopsystem.order.service.domain;
 import com.autumnia.shopsystem.order.service.domain.dto.create.CreateOrderCommand;
 import com.autumnia.shopsystem.order.service.domain.dto.create.CreateOrderResponse;
 import com.autumnia.shopsystem.order.service.domain.dto.track.TrackOrderQuery;
-import com.autumnia.shopsystem.order.service.domain.dto.track.TrackingOrderResponse;
+import com.autumnia.shopsystem.order.service.domain.dto.track.TrackOrderResponse;
 import com.autumnia.shopsystem.order.service.domain.ports.input.OrderApplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ class OrderApplicationServiceImpl implements OrderApplicationService  {
     }
 
     @Override
-    public TrackingOrderResponse trackOrder(TrackOrderQuery trackOrderQuery) {
+    public TrackOrderResponse trackOrder(TrackOrderQuery trackOrderQuery) {
         return this.orderTrackCommandHandler.trackOrder(trackOrderQuery);
     }
 }

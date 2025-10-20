@@ -7,6 +7,7 @@ import com.autumnia.shopsystem.domain.vo.RestaurantId;
 import com.autumnia.shopsystem.order.service.domain.dto.create.CreateOrderCommand;
 import com.autumnia.shopsystem.order.service.domain.dto.create.CreateOrderResponse;
 import com.autumnia.shopsystem.order.service.domain.dto.create.OrderAddress;
+import com.autumnia.shopsystem.order.service.domain.dto.track.TrackOrderResponse;
 import com.autumnia.shopsystem.order.service.domain.entity.*;
 import com.autumnia.shopsystem.order.service.domain.vo.StreetAddress;
 import jakarta.validation.constraints.NotNull;
@@ -44,6 +45,14 @@ public class OrderDataMapper {
                 .orderStatus(order.getOrderStatus())
                 .build();
 
+    }
+
+    public TrackOrderResponse orderToTrackOrderResponse(Order order) {
+        return TrackOrderResponse.builder()
+                .orderTackingId(order.getTrackingId().getValue())
+                .orderStatus(order.getOrderStatus())
+                .failureMessages(order.getFailureMessages())
+                .build();
     }
 
     private List<OrderItem> orderItemsToOrderItemEntities(@NotNull List<com.autumnia.shopsystem.order.service.domain.dto.create.OrderItem> orderItems) {
