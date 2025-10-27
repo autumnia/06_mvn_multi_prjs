@@ -20,7 +20,7 @@ class OrderApplicationServiceImpl implements OrderApplicationService  {
     private final OrderTrackCommandHandler orderTrackCommandHandler;
 
     @Override
-    public CreateOrderResponse creatOrder(CreateOrderCommand createOrderCommand) {
+    public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
         return this.orderCreateCommandHandler.createOrder(createOrderCommand);
     }
 

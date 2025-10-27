@@ -13,7 +13,5 @@ public interface OrderDomainService {
     OrderPaidEvent pay_order(Order order);
     void approve_order(Order order);
     OrderCancelledEvent cancel_order_payment(Order order, List<String> failureMessage);
-
    void cancel_order(Order order, List<String> failureMessage);
-
 }

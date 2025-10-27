@@ -7,6 +7,6 @@ import com.autumnia.shopsystem.order.service.domain.dto.track.TrackOrderResponse
 import jakarta.validation.Valid;
 
 public interface OrderApplicationService {
-    CreateOrderResponse creatOrder(@Valid CreateOrderCommand createOrderCommand);
+    CreateOrderResponse createOrder(@Valid CreateOrderCommand createOrderCommand);
     TrackOrderResponse trackOrder(@Valid TrackOrderQuery trackOrderQuery);
 }
