@@ -176,8 +176,6 @@ public class OrderApplicationServiceTest {
 
     @Test
     public void testCreateOrderWithPassiveRestaurant() {
-//        System.out.println( "원래ID: " + createOrderCommand.getRestaurantId());
-
         Restaurant restaurantResponse = Restaurant.builder()
                 .restaurantId(new RestaurantId( createOrderCommand.getRestaurantId() ) )
                 .products( List.of(
@@ -188,13 +186,10 @@ public class OrderApplicationServiceTest {
                 .active(false)
                 .build();
 
-//        System.out.println( "생성아이디: " + restaurantResponse.getId().getValue() );
-
         when( restaurantRepository.findRestaurantInformation(orderDataMapper.createOrderCommandToRestaurant(createOrderCommand)))
                 .thenReturn(Optional.of(restaurantResponse));
 
         OrderDomainException orderDomainException = assertThrows( OrderDomainException.class, () -> orderApplicationService.createOrder(createOrderCommand));
-//        System.out.println( "RESTAURANT_ID: " + RESTAURANT_ID );
 
         assertNotEquals("restaurant with id: " + RESTAURANT_ID + " is currently not active!", orderDomainException.getMessage()  );
     }

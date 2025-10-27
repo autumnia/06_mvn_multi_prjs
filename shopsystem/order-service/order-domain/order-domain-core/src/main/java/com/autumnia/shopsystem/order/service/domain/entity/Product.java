@@ -3,8 +3,10 @@ package com.autumnia.shopsystem.order.service.domain.entity;
 import com.autumnia.shopsystem.domain.entity.BaseEntity;
 import com.autumnia.shopsystem.domain.vo.Money;
 import com.autumnia.shopsystem.domain.vo.ProductId;
+import lombok.ToString;
 
 
+@ToString
 public class Product extends BaseEntity<ProductId> {
     private String name;
     private Money price;

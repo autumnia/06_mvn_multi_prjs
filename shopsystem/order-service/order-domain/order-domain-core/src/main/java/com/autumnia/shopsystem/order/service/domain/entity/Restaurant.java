@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Restaurant extends AggregateRoot<RestaurantId> {
+    private  RestaurantId restaurantId;
     private final List<Product> products;
-    private boolean active;
+    private final boolean active;
 
     private Restaurant(Builder builder) {
+//        System.out.println("여기: " + builder.restaurantId.getValue());
         super.setId(builder.restaurantId);
+        this.restaurantId = super.getId();
         products = builder.products;
         active = builder.active;
     }

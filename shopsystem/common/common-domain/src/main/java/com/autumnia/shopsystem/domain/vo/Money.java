@@ -1,9 +1,12 @@
 package com.autumnia.shopsystem.domain.vo;
 
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
+@ToString
 public class Money {
     private final BigDecimal amount;
     public static final Money zero = new Money(BigDecimal.ZERO);

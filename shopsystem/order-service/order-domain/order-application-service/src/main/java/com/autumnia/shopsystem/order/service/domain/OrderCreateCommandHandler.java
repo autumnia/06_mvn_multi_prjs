@@ -33,7 +33,12 @@ public class OrderCreateCommandHandler {
     @Transactional
     public CreateOrderResponse createOrder(CreateOrderCommand createOrderCommand) {
         OrderCreatedEvent orderCreatedEvent = orderCreateHelper.persistOrder(createOrderCommand);
-        log.info("Order is created with id {}:", orderCreatedEvent.getOrder().getId().getValue() );
+        log.info("주문 id {}:", orderCreatedEvent.getOrder().getId().getValue() );
+        log.info("고객 id {}:", orderCreatedEvent.getOrder().getCustomerId().getValue() );
+        log.info("상품 id {}:", orderCreatedEvent.getOrder().getItems().getLast().getProduct().getId().getValue() );
+        log.info("식당 id {}:", orderCreatedEvent.getOrder().getRestaurantId().getValue() );
+        log.info("추적 id {}:", orderCreatedEvent.getOrder().getTrackingId().getValue() );
+
 
         orderCreatedPaymentRequestMessagePublisher.publish(orderCreatedEvent);
 
