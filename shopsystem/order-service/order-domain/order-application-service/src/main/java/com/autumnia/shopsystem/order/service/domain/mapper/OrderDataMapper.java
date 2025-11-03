@@ -18,17 +18,6 @@ import java.util.UUID;
 
 @Component
 public class OrderDataMapper {
-    public Restaurant createOrderCommandToRestaurant(CreateOrderCommand createOrderCommand) {
-
-        return Restaurant.builder()
-                .restaurantId( new RestaurantId( createOrderCommand.getRestaurantId() ))
-                .products(createOrderCommand.getItems().stream().map( orderItem ->
-                        new Product( new ProductId( orderItem.getProductId() ))
-                    ).toList())
-                .build();
-
-    }
-
     public Order createOrderCommandToOrder(CreateOrderCommand createOrderCommand) {
         return Order.builder()
                 .customerId( new CustomerId( createOrderCommand.getCustomerId() ))
@@ -59,11 +48,11 @@ public class OrderDataMapper {
     private List<OrderItem> orderItemsToOrderItemEntities(@NotNull List<com.autumnia.shopsystem.order.service.domain.dto.create.OrderItem> orderItems) {
         return orderItems.stream()
                 .map( orderItem -> OrderItem.builder()
-                    .product( new Product( new ProductId( orderItem.getProductId() ) ) )
-                    .price( new Money( orderItem.getPrice() ) )
-                    .quantity( orderItem.getQuantity() )
-                    .subTotal( new Money( orderItem.getSubTotal() ) )
-                    .build()
+                        .product( new Product( new ProductId( orderItem.getProductId() ) ) )
+                        .price( new Money( orderItem.getPrice() ) )
+                        .quantity( orderItem.getQuantity() )
+                        .subTotal( new Money( orderItem.getSubTotal() ) )
+                        .build()
                 )
                 .toList();
     }
@@ -75,6 +64,17 @@ public class OrderDataMapper {
                 orderAddress.getPostalCode(),
                 orderAddress.getCity()
         );
+    }
+
+    public Restaurant createOrderCommandToRestaurant(CreateOrderCommand createOrderCommand) {
+
+        return Restaurant.builder()
+                .restaurantId( new RestaurantId( createOrderCommand.getRestaurantId() ))
+                .products(createOrderCommand.getItems().stream().map( orderItem ->
+                        new Product( new ProductId( orderItem.getProductId() ))
+                    ).toList())
+                .build();
+
     }
 }
 

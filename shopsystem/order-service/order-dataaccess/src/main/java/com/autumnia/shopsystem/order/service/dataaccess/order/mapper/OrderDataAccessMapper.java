@@ -60,7 +60,6 @@ public class OrderDataAccessMapper {
         );
     }
 
-
     public OrderEntity orderToOrderEntity(Order order) {
         OrderEntity orderEntity = OrderEntity.builder()
                 .id(order.getId().getValue())
