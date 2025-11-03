@@ -20,13 +20,13 @@ public class OrderEntity {
     private UUID id;
     private UUID customerId;
     private UUID restaurantId;
-    private UUID trackingid;
+    private UUID trackingId;
 
     private BigDecimal price;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    private String failureMessage;
+    private String failureMessages;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private OrderAddressEntity address;

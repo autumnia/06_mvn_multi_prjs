@@ -1,21 +1,22 @@
 package com.autumnia.shopsystem.order.service.dataaccess.order.mapper;
 
-import com.autumnia.shopsystem.domain.vo.CustomerId;
-import com.autumnia.shopsystem.domain.vo.Money;
-import com.autumnia.shopsystem.domain.vo.OrderId;
-import com.autumnia.shopsystem.domain.vo.RestaurantId;
+import com.autumnia.shopsystem.domain.vo.*;
 import com.autumnia.shopsystem.order.service.dataaccess.order.entity.OrderAddressEntity;
 import com.autumnia.shopsystem.order.service.dataaccess.order.entity.OrderEntity;
 import com.autumnia.shopsystem.order.service.dataaccess.order.entity.OrderItemEntity;
 import com.autumnia.shopsystem.order.service.domain.entity.Order;
 import com.autumnia.shopsystem.order.service.domain.entity.OrderItem;
+import com.autumnia.shopsystem.order.service.domain.entity.Product;
+import com.autumnia.shopsystem.order.service.domain.vo.OrderItemId;
 import com.autumnia.shopsystem.order.service.domain.vo.StreetAddress;
+import com.autumnia.shopsystem.order.service.domain.vo.TrackingId;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.autumnia.shopsystem.order.service.domain.entity.Order.FAILURE_MESSAGE_DELIMETER;
+import static com.autumnia.shopsystem.order.service.domain.entity.Order.FAILURE_MESSAGE_DELIMITER;
 
 @Component
 public class OrderDataAccessMapper {
@@ -28,11 +29,26 @@ public class OrderDataAccessMapper {
                 .deliveryAddress( addressEntityToDeliveryAddress(orderEntity.getAddress()) )
                 .price(new Money(orderEntity.getPrice()) )
                 .items( orderItemEntitiesToOrderItems(orderEntity.getItems()) )
+                .trackingId( new TrackingId( orderEntity.getTrackingId() ) )
+                .orderStatus( orderEntity.getOrderStatus())
+                .failureMessages( orderEntity.getFailureMessages().isEmpty()
+                        ? new ArrayList<>()
+                        : new ArrayList<>(Arrays.asList( orderEntity.getFailureMessages().split(FAILURE_MESSAGE_DELIMITER)) )
+                )
                 .build();
     }
 
     private List<OrderItem> orderItemEntitiesToOrderItems(List<OrderItemEntity> items) {
-        return null;
+        return items.stream()
+                .map( orderItemEntity ->  OrderItem.builder()
+                        .OrderItemId( new OrderItemId( orderItemEntity.getId() ))
+                        .product( new Product( new ProductId( orderItemEntity.getProductId() )) )
+                        .price( new Money(  orderItemEntity.getPrice() ))
+                        .quantity( orderItemEntity.getQuantity() )
+                        .subTotal( new Money( orderItemEntity.getSubTotal()) )
+                        .build()
+                )
+                .toList();
     }
 
     private StreetAddress addressEntityToDeliveryAddress(OrderAddressEntity address) {
@@ -50,17 +66,16 @@ public class OrderDataAccessMapper {
                 .id(order.getId().getValue())
                 .customerId(order.getCustomerId().getValue())
                 .restaurantId(order.getRestaurantId().getValue())
-                .trackingid(order.getTrackingId().getValue())
-                .address(DeliveryAddressToAddressEntity( order.getDeliveryAddress() ))
-                .price( order.getPrice().getAmount() )
-                .items(  orderItemsToOrderItemEntities( order.getItems() )  )
+                .trackingId(order.getTrackingId().getValue())
+                .address(deliveryAddressToAddressEntity(order.getDeliveryAddress()))
+                .price(order.getPrice().getAmount())
+                .items(orderItemsToOrderItemEntities(order.getItems()))
                 .orderStatus(order.getOrderStatus())
-                .failureMessage(order.getFailureMessages() != null ?  String.join(FAILURE_MESSAGE_DELIMETER, order.getFailureMessages()) : "" )
+                .failureMessages(order.getFailureMessages() != null ?
+                        String.join(FAILURE_MESSAGE_DELIMITER, order.getFailureMessages()) : "")
                 .build();
-
-        // 빠트리지 않도록 주의
         orderEntity.getAddress().setOrder(orderEntity);
-        orderEntity.getItems().forEach(orderItemEntity ->   orderItemEntity.setOrder(orderEntity) );
+        orderEntity.getItems().forEach(orderItemEntity -> orderItemEntity.setOrder(orderEntity));
 
         return orderEntity;
     }
@@ -78,7 +93,7 @@ public class OrderDataAccessMapper {
                 .toList();
     }
 
-    private OrderAddressEntity DeliveryAddressToAddressEntity(StreetAddress deliveryAddress) {
+    private OrderAddressEntity deliveryAddressToAddressEntity(StreetAddress deliveryAddress) {
         return OrderAddressEntity.builder()
                 .id(deliveryAddress.getId())
                 .street(deliveryAddress.getStreet())
